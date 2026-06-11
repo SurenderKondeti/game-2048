@@ -23,6 +23,19 @@ pipeline {
       }
     }
 
+    stage('Trivy Scan') {
+      steps {
+        sh """
+          # Scan the image for vulnerabilities
+          trivy image \
+            --exit-code 0 \
+            --severity LOW,MEDIUM,HIGH,CRITICAL \
+            --format table \
+            ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
+        """
+      }
+    }
+
     stage('Push to ECR') {
       steps {
         sh """
